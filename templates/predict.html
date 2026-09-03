@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card" style="max-width: 700px; margin: auto; padding: 2rem;">
+    <h2 style="color: white; margin-bottom: 0.5rem;">📋 Live Transaction Risk Scoring</h2>
+    <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 1.5rem;">Input custom transaction parameters to evaluate success probability and dynamic routing.</p>
+    
+    {% if error %}
+    <div style="background: rgba(127, 29, 29, 0.4); border: 1px solid #b91c1c; color: #fecaca; padding: 0.75rem; border-radius: 6px; margin-bottom: 1rem; font-size: 0.85rem;">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+            <div><label style="font-size: 0.85rem; color: #cbd5e1;">Amount ($)</label><input type="number" step="any" name="amount" value="{{ form_data.amount if form_data else '2500.0' }}" required style="width:100%; padding:0.6rem; background:#0b0f19; border:1px solid #374151; color:white; border-radius:6px; margin-top:0.3rem;"></div>
+            <div><label style="font-size: 0.85rem; color: #cbd5e1;">Payment Method Enc</label><input type="number" name="payment_method_enc" value="{{ form_data.payment_method_enc if form_data else '0' }}" required style="width:100%; padding:0.6rem; background:#0b0f19; border:1px solid #374151; color:white; border-radius:6px; margin-top:0.3rem;"></div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+            <div><label style="font-size: 0.85rem; color: #cbd5e1;">Hour (0-23)</label><input type="number" name="hour" value="{{ form_data.hour if form_data else '14' }}" required style="width:100%; padding:0.6rem; background:#0b0f19; border:1px solid #374151; color:white; border-radius:6px; margin-top:0.3rem;"></div>
+            <div><label style="font-size: 0.85rem; color: #cbd5e1;">Day Code (0-6)</label><input type="number" name="day_of_week_enc" value="{{ form_data.day_of_week_enc if form_data else '2' }}" required style="width:100%; padding:0.6rem; background:#0b0f19; border:1px solid #374151; color:white; border-radius:6px; margin-top:0.3rem;"></div>
+        </div>
+        <!-- Hidden/Default auxiliary fields required by model schema -->
+        <input type="hidden" name="customer_previous_success" value="10">
+        <input type="hidden" name="customer_previous_failures" value="0">
+        <input type="hidden" name="retry_count" value="0">
+        <input type="hidden" name="error_code_enc" value="0">
+        <input type="hidden" name="transaction_frequency" value="4.5">
+        <input type="hidden" name="average_customer_transaction" value="2000.0">
+
+        <button type="submit" class="btn-submit" style="width: 100%; padding: 0.75rem; background: #2563eb; color: white; border: none; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 1rem;">Evaluate Risk & Routing</button>
+    </form>
+
+    {% if prediction %}
+    <div style="margin-top: 1.5rem; padding: 1.25rem; background: #0b0f19; border: 1px solid #374151; border-radius: 8px;">
+        <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 0.5rem;"><strong>Routing Advice:</strong> {{ advice }}</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

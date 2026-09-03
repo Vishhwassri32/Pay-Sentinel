@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- SaaS Hero Section -->
+<div class="card" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1px solid #334155; padding: 2.5rem; border-radius: 1rem; margin-bottom: 2rem; text-align: center;">
+    <span style="background-color: #3b82f6; color: white; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase;">Razorpay Hackathon Production Build</span>
+    <h1 style="font-size: 2.25rem; font-weight: 800; color: white; margin-top: 1rem;">⚡ PaySentinel AI Hub</h1>
+    <p style="color: #94a3b8; font-size: 1rem; max-width: 650px; margin: 0.75rem auto 1.5rem auto;">
+        An autonomous web-stack and machine learning ecosystem designed to predict payment friction, diagnose root causes via intelligent agents, and recover lost revenue in real-time.
+    </p>
+    <div style="display: flex; justify-content: center; gap: 1rem;">
+        <a href="/predict-page" class="btn-submit" style="background-color: #2563eb; text-decoration: none; padding: 0.6rem 1.25rem; border-radius: 8px; font-weight: bold; color: white;">🚀 Launch Risk Predictor</a>
+        <a href="/diagnose-page" class="btn-submit" style="background-color: #059669; text-decoration: none; padding: 0.6rem 1.25rem; border-radius: 8px; font-weight: bold; color: white;">🔍 Run Agent Diagnosis</a>
+    </div>
+</div>
+
+<!-- Executive Metrics Overview -->
+<h2 style="font-size: 1.1rem; color: white; margin-bottom: 1rem; font-weight: 600;">📊 Live Executive Recovery Metrics</h2>
+<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem;">
+    <div class="card" style="padding: 1rem;"><span style="color: #94a3b8; font-size: 0.75rem; text-transform: uppercase;">Total Transactions</span><h3 style="color: white; font-size: 1.5rem; margin-top: 0.25rem;">{{ metrics.total_transactions }}</h3></div>
+    <div class="card" style="padding: 1rem;"><span style="color: #94a3b8; font-size: 0.75rem; text-transform: uppercase;">Failure Rate</span><h3 style="color: #fca5a5; font-size: 1.5rem; margin-top: 0.25rem;">{{ metrics.failure_rate }}%</h3></div>
+    <div class="card" style="padding: 1rem;"><span style="color: #94a3b8; font-size: 0.75rem; text-transform: uppercase;">Failed Revenue</span><h3 style="color: #f87171; font-size: 1.5rem; margin-top: 0.25rem;">₹{{ metrics.total_failed_revenue }}</h3></div>
+    <div class="card" style="padding: 1rem;"><span style="color: #60a5fa; font-size: 0.75rem; text-transform: uppercase;">Recoverable (AI)</span><h3 style="color: #34d399; font-size: 1.5rem; margin-top: 0.25rem;">₹{{ metrics.recoverable_revenue }}</h3></div>
+</div>
+
+<!-- Failure Breakdown Table -->
+<div class="card">
+    <h2 style="font-size: 1.1rem; color: white; margin-bottom: 1rem;">Failure Category Loss Breakdown</h2>
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; text-align: left; border-collapse: collapse; font-size: 0.9rem;">
+            <tr style="border-bottom: 1px solid #374151; color: #94a3b8;"><th style="padding: 0.75rem;">Category</th><th style="padding: 0.75rem; text-align: right;">Lost Revenue</th></tr>
+            {% for row in breakdown %}
+            <tr style="border-bottom: 1px solid #1f2937;"><td style="padding: 0.75rem;">{{ row['Failure Category'] }}</td><td style="padding: 0.75rem; text-align: right; color: #f87171;">₹{{ row['Lost Revenue'] }}</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}

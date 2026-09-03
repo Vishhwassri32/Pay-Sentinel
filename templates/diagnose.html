@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card" style="max-width: 700px; margin: auto; padding: 2rem;">
+    <h2 style="color: white; margin-bottom: 0.5rem;">🔍 Agentic Transaction Diagnosis</h2>
+    <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 1.5rem;">Select any failed payment ID to trigger autonomous root-cause reasoning.</p>
+
+    <form method="POST">
+        <label style="font-size: 0.85rem; color: #cbd5e1;">Select Failed Payment ID</label>
+        <select name="payment_id" style="width: 100%; padding: 0.6rem; margin: 0.4rem 0 1.2rem 0; background: #0b0f19; border: 1px solid #374151; color: white; border-radius: 6px;">
+            {% for pay_id in failed_txs %}
+            <option value="{{ pay_id }}" {% if selected_id == pay_id %}selected{% endif %}>{{ pay_id }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn-submit" style="width: 100%; padding: 0.75rem; background: #059669; color: white; border: none; font-weight: bold; border-radius: 6px; cursor: pointer;">Run PaySentinel Agent Analysis</button>
+    </form>
+
+    {% if diagnosis %}
+    <div style="margin-top: 1.5rem; padding: 1.25rem; background: #0b0f19; border: 1px solid #1f2937; border-radius: 8px;">
+        <span style="font-size: 0.75rem; color: #34d399; font-weight: bold; text-transform: uppercase;">Diagnosis Result</span>
+        <p style="font-size: 0.95rem; color: white; margin-top: 0.5rem;"><strong>Root Cause:</strong> {{ diagnosis.root_cause }}</p>
+        <p style="font-size: 0.9rem; color: #cbd5e1; margin-top: 0.4rem;"><strong>Recommended Action:</strong> {{ diagnosis.recommended_action }}</p>
+        <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 0.4rem;"><strong>Priority Level:</strong> {{ diagnosis.priority }} | <strong>Recoverability Score:</strong> {{ diagnosis.recoverability_score * 100 }}%</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

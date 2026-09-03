@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PaySentinel - Razorpay AI Hub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: #0f172a; border-bottom: 1px solid #1e293b;">
+        <div class="nav-brand" style="font-weight: bold; font-size: 1.25rem; color: white; display: flex; align-items: center; gap: 0.5rem;">
+            <span>⚡</span> PaySentinel <span style="color: #60a5fa;">AI Hub</span>
+        </div>
+        <div style="display: flex; gap: 1.5rem; align-items: center;">
+            <a href="/" style="color: #cbd5e1; text-decoration: none; font-size: 0.9rem; font-weight: 500;">📊 Dashboard</a>
+            <a href="/predict-page" style="color: #cbd5e1; text-decoration: none; font-size: 0.9rem; font-weight: 500;">📋 Risk Scoring</a>
+            <a href="/diagnose-page" style="color: #cbd5e1; text-decoration: none; font-size: 0.9rem; font-weight: 500;">🔍 Agent Diagnosis</a>
+            <a href="/export_report" style="background-color: #2563eb; color: white; padding: 0.4rem 0.8rem; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: bold;">📥 Export CSV</a>
+        </div>
+    </nav>
+
+    <main class="main-container" style="padding: 2rem; max-width: 1200px; margin: auto;">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer style="text-align: center; padding: 1.5rem; color: #64748b; font-size: 0.8rem; border-top: 1px solid #1e293b; margin-top: 3rem;">
+        PaySentinel Razorpay AI Hackathon Production Edition &bull; Intelligent Fintech Routing & Recovery
+    </footer>
+</body>
+</html>
