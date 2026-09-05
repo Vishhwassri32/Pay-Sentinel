@@ -1,26 +1,62 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="card" style="max-width: 700px; margin: auto; padding: 2rem;">
-    <h2 style="color: white; margin-bottom: 0.5rem;">🔍 Agentic Transaction Diagnosis</h2>
-    <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 1.5rem;">Select any failed payment ID to trigger autonomous root-cause reasoning.</p>
+<div class="card" style="max-width: 650px; margin: auto; padding: 2rem;">
+    <h2 style="color: white; margin-bottom: 0.5rem;">🔍 Dual Agent Root-Cause Diagnosis</h2>
+    <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 1.5rem;">Select any failed payment ID to trigger real-time autonomous reasoning without page reload.</p>
 
-    <form method="POST">
+    <form id="diagnosisForm">
         <label style="font-size: 0.85rem; color: #cbd5e1;">Select Failed Payment ID</label>
-        <select name="payment_id" style="width: 100%; padding: 0.6rem; margin: 0.4rem 0 1.2rem 0; background: #0b0f19; border: 1px solid #374151; color: white; border-radius: 6px;">
+        <select name="payment_id" id="paymentIdSelect" style="width: 100%; padding: 0.6rem; margin: 0.4rem 0 1.2rem 0; background: #0b0f19; border: 1px solid #374151; color: white; border-radius: 6px;">
             {% for pay_id in failed_txs %}
-            <option value="{{ pay_id }}" {% if selected_id == pay_id %}selected{% endif %}>{{ pay_id }}</option>
+            <option value="{{ pay_id }}">{{ pay_id }}</option>
             {% endfor %}
         </select>
-        <button type="submit" class="btn-submit" style="width: 100%; padding: 0.75rem; background: #059669; color: white; border: none; font-weight: bold; border-radius: 6px; cursor: pointer;">Run PaySentinel Agent Analysis</button>
+        <button type="submit" style="width: 100%; padding: 0.75rem; background: #059669; color: white; border: none; font-weight: bold; border-radius: 6px; cursor: pointer;">Run Live AI Diagnosis</button>
     </form>
 
-    {% if diagnosis %}
-    <div style="margin-top: 1.5rem; padding: 1.25rem; background: #0b0f19; border: 1px solid #1f2937; border-radius: 8px;">
-        <span style="font-size: 0.75rem; color: #34d399; font-weight: bold; text-transform: uppercase;">Diagnosis Result</span>
-        <p style="font-size: 0.95rem; color: white; margin-top: 0.5rem;"><strong>Root Cause:</strong> {{ diagnosis.root_cause }}</p>
-        <p style="font-size: 0.9rem; color: #cbd5e1; margin-top: 0.4rem;"><strong>Recommended Action:</strong> {{ diagnosis.recommended_action }}</p>
-        <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 0.4rem;"><strong>Priority Level:</strong> {{ diagnosis.priority }} | <strong>Recoverability Score:</strong> {{ diagnosis.recoverability_score * 100 }}%</p>
+    <div id="loadingSpinner" style="display: none; text-align: center; margin-top: 1.5rem; color: #60a5fa; font-size: 0.9rem;">
+        ⚡ AI Agent is analyzing gateway logs and error codes in real-time...
     </div>
-    {% endif %}
+
+    <div id="diagnosisResultBox" style="display: none; margin-top: 1.5rem; padding: 1.25rem; background: #0b0f19; border: 1px solid #1f2937; border-radius: 8px;">
+        <span style="font-size: 0.75rem; color: #34d399; font-weight: bold; text-transform: uppercase;">Real-Time Agent Result</span>
+        <p id="resRootCause" style="font-size: 0.95rem; color: white; margin-top: 0.5rem;"></p>
+        <p id="resAction" style="font-size: 0.9rem; color: #cbd5e1; margin-top: 0.4rem;"></p>
+        <p id="resMeta" style="font-size: 0.85rem; color: #94a3b8; margin-top: 0.4rem;"></p>
+    </div>
 </div>
+
+<script>
+document.getElementById('diagnosisForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const paymentId = document.getElementById('paymentIdSelect').value;
+    const spinner = document.getElementById('loadingSpinner');
+    const resultBox = document.getElementById('diagnosisResultBox');
+    
+    spinner.style.display = 'block';
+    resultBox.style.display = 'none';
+
+    try {
+        const response = await fetch('/api/diagnose', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `payment_id=${paymentId}`
+        });
+        const data = await response.json();
+        
+        spinner.style.display = 'none';
+        if(data.success) {
+            document.getElementById('resRootCause').innerHTML = `<strong>Root Cause:</strong> ${data.diagnosis.root_cause}`;
+            document.getElementById('resAction').innerHTML = `<strong>Recommended Action:</strong> ${data.diagnosis.recommended_action}`;
+            document.getElementById('resMeta').innerHTML = `<strong>Priority Level:</strong> ${data.diagnosis.priority} | <strong>Recoverability:</strong> ${data.diagnosis.recoverability_score * 100}%`;
+            resultBox.style.display = 'block';
+        } else {
+            alert('Diagnosis failed: ' + data.error);
+        }
+    } catch(err) {
+        spinner.style.display = 'none';
+        alert('An error occurred during agent execution.');
+    }
+});
+</script>
 {% endblock %}

@@ -3,28 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PaySentinel - Razorpay AI Hub</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>PaySentinel - AI Hub</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            background: #050811;
+            color: #e2e8f0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            overflow-x: hidden;
+        }
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .navbar {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2.5rem;
+        }
+        .card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 30px 0 rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade {
+            animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
 </head>
 <body>
-    <nav class="navbar" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: #0f172a; border-bottom: 1px solid #1e293b;">
-        <div class="nav-brand" style="font-weight: bold; font-size: 1.25rem; color: white; display: flex; align-items: center; gap: 0.5rem;">
-            <span>⚡</span> PaySentinel <span style="color: #60a5fa;">AI Hub</span>
+    <canvas id="bg-canvas"></canvas>
+
+    <nav class="navbar">
+        <div style="font-weight: 800; font-size: 1.25rem; color: white;">
+            <a href="/" style="color: white; text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+                <span style="color: #3b82f6;">⚡</span> PaySentinel
+            </a>
         </div>
-        <div style="display: flex; gap: 1.5rem; align-items: center;">
-            <a href="/" style="color: #cbd5e1; text-decoration: none; font-size: 0.9rem; font-weight: 500;">📊 Dashboard</a>
-            <a href="/predict-page" style="color: #cbd5e1; text-decoration: none; font-size: 0.9rem; font-weight: 500;">📋 Risk Scoring</a>
+        <div style="display: flex; gap: 2rem; align-items: center;">
+            <a href="/dashboard" style="color: #cbd5e1; text-decoration: none; font-size: 0.9rem; font-weight: 500;">📊 Dashboard</a>
+            <a href="/predict-page" style="color: #cbd5e1; text-decoration: none; font-size: 0.9rem; font-weight: 500;">📋 Predictor</a>
             <a href="/diagnose-page" style="color: #cbd5e1; text-decoration: none; font-size: 0.9rem; font-weight: 500;">🔍 Agent Diagnosis</a>
-            <a href="/export_report" style="background-color: #2563eb; color: white; padding: 0.4rem 0.8rem; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: bold;">📥 Export CSV</a>
+            <a href="/export_report" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; padding: 0.45rem 1rem; border-radius: 8px; text-decoration: none; font-size: 0.85rem; font-weight: bold; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);">📥 Export CSV</a>
         </div>
     </nav>
 
-    <main class="main-container" style="padding: 2rem; max-width: 1200px; margin: auto;">
+    <main style="padding: 2.5rem; max-width: 1200px; margin: auto;" class="animate-fade">
         {% block content %}{% endblock %}
     </main>
 
-    <footer style="text-align: center; padding: 1.5rem; color: #64748b; font-size: 0.8rem; border-top: 1px solid #1e293b; margin-top: 3rem;">
-        PaySentinel Razorpay AI Hackathon Production Edition &bull; Intelligent Fintech Routing & Recovery
-    </footer>
+    <script>
+        const canvas = document.getElementById('bg-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        const particlesCount = 700;
+        const posArray = new Float32Array(particlesCount * 3);
+        for(let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 15;
+        }
+
+        const particlesGeometry = new THREE.BufferGeometry();
+        particlesGeometry.setAttribute('position', new RenderAttribute(posArray, 3)); // Fixed spelling if any
+        // ... standard three loop ...
+        const particlesMaterial = new THREE.PointsMaterial({ size: 0.025, color: 0x38bdf8, transparent: true, opacity: 0.75 });
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+        camera.position.z = 4;
+
+        let mouseX = 0, mouseY = 0;
+        document.addEventListener('mousemove', (event) => {
+            mouseX = event.clientX / window.innerWidth - 0.5;
+            mouseY = event.clientY / window.innerHeight - 0.5;
+        });
+
+        const clock = new THREE.Clock();
+        function animate() {
+            requestAnimationFrame(animate);
+            const elapsedTime = clock.getElapsedTime();
+            particlesMesh.rotation.y = elapsedTime * 0.03 + mouseX * 0.3;
+            particlesMesh.rotation.x = elapsedTime * 0.02 + mouseY * 0.3;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
 </body>
 </html>

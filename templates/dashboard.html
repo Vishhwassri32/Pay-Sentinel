@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+    <div>
+        <h1 style="color: white; font-size: 1.75rem; margin-bottom: 0.25rem;">📊 Executive Recovery Dashboard</h1>
+        <p style="color: #94a3b8; font-size: 0.85rem;">Real-time aggregation of transaction health, leakage points, and AI-recoverable revenue.</p>
+    </div>
+    <a href="/export_report" style="background: #2563eb; color: white; padding: 0.6rem 1rem; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 0.85rem;">📥 Export Report CSV</a>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem;">
+    <div class="card" style="padding: 1.25rem;">
+        <span style="color: #94a3b8; font-size: 0.75rem; text-transform: uppercase; font-weight: 600;">Total Transactions</span>
+        <h3 style="color: white; font-size: 1.75rem; margin-top: 0.3rem;">{{ metrics.total_transactions }}</h3>
+    </div>
+    <div class="card" style="padding: 1.25rem;">
+        <span style="color: #94a3b8; font-size: 0.75rem; text-transform: uppercase; font-weight: 600;">Failure Rate</span>
+        <h3 style="color: #fca5a5; font-size: 1.75rem; margin-top: 0.3rem;">{{ metrics.failure_rate }}%</h3>
+    </div>
+    <div class="card" style="padding: 1.25rem;">
+        <span style="color: #94a3b8; font-size: 0.75rem; text-transform: uppercase; font-weight: 600;">Failed Revenue</span>
+        <h3 style="color: #f87171; font-size: 1.75rem; margin-top: 0.3rem;">₹{{ metrics.total_failed_revenue }}</h3>
+    </div>
+    <div class="card" style="padding: 1.25rem;">
+        <span style="color: #60a5fa; font-size: 0.75rem; text-transform: uppercase; font-weight: 600;">Recoverable (AI)</span>
+        <h3 style="color: #34d399; font-size: 1.75rem; margin-top: 0.3rem;">₹{{ metrics.recoverable_revenue }}</h3>
+    </div>
+</div>
+
+<div class="card" style="padding: 1.5rem;">
+    <h2 style="font-size: 1.1rem; color: white; margin-bottom: 1rem;">Failure Category Loss Breakdown</h2>
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; text-align: left; border-collapse: collapse; font-size: 0.9rem;">
+            <tr style="border-bottom: 1px solid #374151; color: #94a3b8;">
+                <th style="padding: 0.75rem;">Category</th>
+                <th style="padding: 0.75rem; text-align: right;">Lost Revenue</th>
+            </tr>
+            {% for row in breakdown %}
+            <tr style="border-bottom: 1px solid #283548;">
+                <td style="padding: 0.75rem; color: #e2e8f0;">{{ row['Failure Category'] }}</td>
+                <td style="padding: 0.75rem; text-align: right; color: #f87171; font-weight: 600;">₹{{ row['Lost Revenue'] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}
